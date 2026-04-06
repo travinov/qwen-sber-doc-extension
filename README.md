@@ -57,7 +57,9 @@ Qwen-расширение для стандартизированной доку
 
 1. `qwen` CLI установлен и доступен в `PATH`.
 2. Node.js 22+.
-3. Собранный companion сервер [`qwen-sber-doc-mcp`](../qwen-sber-doc-mcp).
+3. Доступ к MCP server одним из способов:
+   - локальная сборка [`qwen-sber-doc-mcp`](https://github.com/travinov/qwen-sber-doc-mcp),
+   - npm-пакет `qwen-sber-doc-mcp` (через fallback `npx`).
 
 Рекомендуемая структура каталогов:
 
@@ -86,6 +88,13 @@ qwen extensions link .
 ```bash
 qwen extensions install travinov/qwen-sber-doc-extension
 ```
+
+Launcher `scripts/run-mcp.js` запускает MCP в таком порядке:
+
+1. `QWEN_SBER_DOC_MCP_ENTRY`
+2. `../qwen-sber-doc-mcp/dist/src/index.js`
+3. `node_modules/qwen-sber-doc-mcp/dist/src/index.js`
+4. `npx --yes qwen-sber-doc-mcp`
 
 Если extension и MCP лежат не рядом, укажите явный путь:
 
