@@ -1,0 +1,118 @@
+# Qwen Sber Doc Extension
+
+Qwen-расширение для стандартизированной документации Python-модулей в стиле Сбера.
+
+## Зачем устанавливать это решение
+
+Расширение закрывает практическую проблему командной документации:
+
+1. Единый официальный стиль на русском языке без ручного «выравнивания» текста.
+2. Повторяемая структура для всех модулей: назначение, сущности, параметры, примеры.
+3. Связка с MCP-проверками, чтобы текст был не только красивым, но и полным.
+
+Это полезно, когда вы:
+
+1. Ведете внутреннюю техдокументацию SDK/CLI.
+2. Готовите open-source README/API docs и хотите стабильный формат.
+3. Онбордите новых инженеров и хотите одинаковый уровень качества описаний.
+
+## Что внутри
+
+1. Skill: `skills/sber-doc-style/SKILL.md`
+Назначение: закрепляет тон, терминологию и структуру документа.
+2. Slash command: `commands/doc/sber.md`
+Назначение: дает единый вход `/doc:sber <path>`.
+3. Extension context: `QWEN.md`
+Назначение: описывает правила и порядок использования инструментов.
+4. Manifest: `qwen-extension.json`
+Назначение: подключает skill, command и MCP server.
+5. Launcher: `scripts/run-mcp.js`
+Назначение: находит и запускает companion MCP server.
+
+## Как это работает в CLI
+
+Пользователь запускает:
+
+```text
+/doc:sber /absolute/path/to/module.py
+```
+
+Далее агент:
+
+1. вызывает `analyze_python_module`;
+2. строит каркас через `build_sber_doc_outline`;
+3. генерирует финальный документ в RU-формате;
+4. проверяет результат через `validate_sber_doc`.
+
+## Установка (подробно)
+
+Требования:
+
+1. `qwen` CLI установлен и доступен в `PATH`.
+2. Node.js 22+.
+3. Собранный companion сервер [`qwen-sber-doc-mcp`](../qwen-sber-doc-mcp).
+
+Рекомендуемая структура каталогов:
+
+```text
+workspace/
+  qwen-sber-doc-extension/
+  qwen-sber-doc-mcp/
+```
+
+Шаги:
+
+```bash
+git clone <EXTENSION_REPO_URL> qwen-sber-doc-extension
+git clone <MCP_REPO_URL> qwen-sber-doc-mcp
+
+cd qwen-sber-doc-mcp
+npm install
+npm run build
+
+cd ../qwen-sber-doc-extension
+qwen extensions link .
+```
+
+Если extension и MCP лежат не рядом, укажите явный путь:
+
+```bash
+export QWEN_SBER_DOC_MCP_ENTRY="/absolute/path/to/qwen-sber-doc-mcp/dist/src/index.js"
+```
+
+После этого перезапустите `qwen`.
+
+## Примеры использования
+
+1. Документация конкретного файла:
+
+```text
+/doc:sber /repo/src/query_engine.py
+```
+
+2. Пакетная работа по модулям (ручной запуск по очереди):
+
+```text
+/doc:sber /repo/src/session_store.py
+/doc:sber /repo/src/runtime.py
+/doc:sber /repo/src/tool_pool.py
+```
+
+3. Обновление документации после изменения API:
+
+```text
+/doc:sber /repo/src/new_module.py
+```
+
+## Типовые задачи конечного пользователя
+
+1. Подготовить docs для релиза библиотечного модуля.
+2. Привести в единый формат документацию разных команд/репозиториев.
+3. Контролировать минимальный уровень качества (параметры + примеры + структура).
+4. Сократить время ревью документации на pull request.
+
+## Ограничения v1
+
+1. Фокус на Python-модулях.
+2. Без публикации в marketplace.
+3. Качество итогового текста зависит от качества исходного кода и docstring.
