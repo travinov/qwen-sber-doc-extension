@@ -1,11 +1,11 @@
 {
-  "name": "qwen-sber-doc-extension",
-  "version": "0.3.0",
+  "name": "gigadoc-extension",
+  "version": "0.4.0",
   "contextFileName": "QWEN.md",
   "commands": "commands",
   "skills": "skills",
   "mcpServers": {
-    "sber-doc-mcp": {
+    "gigadoc-mcp": {
       "command": "node",
       "args": [
         "${extensionPath}${/}scripts${/}run-mcp.js"

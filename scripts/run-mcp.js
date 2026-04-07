@@ -5,21 +5,20 @@ const path = require("node:path");
 const { spawn } = require("node:child_process");
 
 function resolveLaunchTarget() {
-  const explicitEntry = process.env.QWEN_SBER_DOC_MCP_ENTRY;
+  const explicitEntry = process.env.GIGADOC_MCP_ENTRY;
   if (explicitEntry && fs.existsSync(explicitEntry)) {
     return { mode: "node-entry", entry: explicitEntry };
   }
 
-  const siblingDistEntry = path.resolve(__dirname, "../../qwen-sber-doc-mcp/dist/src/index.js");
-  if (fs.existsSync(siblingDistEntry)) {
+  const siblingDistCandidates = [path.resolve(__dirname, "../../gigadoc-mcp/dist/src/index.js")];
+  const siblingDistEntry = siblingDistCandidates.find((entry) => fs.existsSync(entry));
+  if (siblingDistEntry) {
     return { mode: "node-entry", entry: siblingDistEntry };
   }
 
-  const localNodeModulesEntry = path.resolve(
-    __dirname,
-    "../node_modules/qwen-sber-doc-mcp/dist/src/index.js"
-  );
-  if (fs.existsSync(localNodeModulesEntry)) {
+  const nodeModulesCandidates = [path.resolve(__dirname, "../node_modules/gigadoc-mcp/dist/src/index.js")];
+  const localNodeModulesEntry = nodeModulesCandidates.find((entry) => fs.existsSync(entry));
+  if (localNodeModulesEntry) {
     return { mode: "node-entry", entry: localNodeModulesEntry };
   }
 
@@ -31,7 +30,7 @@ function main() {
   const spawnArgs =
     target.mode === "node-entry"
       ? [process.execPath, [target.entry]]
-      : [process.platform === "win32" ? "npx.cmd" : "npx", ["--yes", "qwen-sber-doc-mcp"]];
+      : [process.platform === "win32" ? "npx.cmd" : "npx", ["--yes", "gigadoc-mcp"]];
 
   const child = spawn(spawnArgs[0], spawnArgs[1], { stdio: "inherit", env: process.env });
 

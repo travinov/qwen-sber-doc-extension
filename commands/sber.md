@@ -6,7 +6,7 @@
 Порядок работы обязателен:
 
 1. Убедитесь, что MCP tools доступны. Если `analyze_python_target` не найден:
-   - сообщите, что требуется подключение MCP server `qwen-sber-doc-mcp`;
+   - сообщите, что требуется подключение MCP server `gigadoc-mcp`;
    - остановите выполнение и не генерируйте фиктивный результат.
 2. Вызовите MCP tool `analyze_python_target` для `{{args}}`.
 3. Если результат `kind=module`, вызовите `build_sber_doc_outline`.

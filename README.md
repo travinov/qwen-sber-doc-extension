@@ -1,12 +1,12 @@
-# Sber Doc Extension (Gigacode/Gemini + Qwen)
+# Gigadoc Extension (Gigacode/Gemini + Qwen)
 
 Расширение для документирования Python-файлов и директорий проекта в официальном русскоязычном стиле.
 
 ## Публичные ссылки
 
-1. Extension repo: [https://github.com/travinov/qwen-sber-doc-extension](https://github.com/travinov/qwen-sber-doc-extension)
-2. MCP repo: [https://github.com/travinov/qwen-sber-doc-mcp](https://github.com/travinov/qwen-sber-doc-mcp)
-3. MCP npm: [https://www.npmjs.com/package/qwen-sber-doc-mcp](https://www.npmjs.com/package/qwen-sber-doc-mcp)
+1. Extension repo: [https://github.com/travinov/gigadoc-extension](https://github.com/travinov/gigadoc-extension)
+2. MCP repo: [https://github.com/travinov/gigadoc-mcp](https://github.com/travinov/gigadoc-mcp)
+3. MCP npm: [https://www.npmjs.com/package/gigadoc-mcp](https://www.npmjs.com/package/gigadoc-mcp)
 
 ## Форматы манифеста
 
@@ -26,21 +26,21 @@
 3. `build_sber_project_outline`
 4. `validate_sber_doc`
 
-Если tools не подключены, команда корректно сообщит о необходимости добавить MCP server `qwen-sber-doc-mcp`.
+Если tools не подключены, команда корректно сообщит о необходимости добавить MCP server `gigadoc-mcp`.
 
 ## Установка в Gigacode
 
 В интерфейсе:
 
 ```text
-/extensions install https://github.com/travinov/qwen-sber-doc-extension.git
+/extensions install https://github.com/travinov/gigadoc-extension.git
 ```
 
 Локальная разработка:
 
 ```bash
-git clone https://github.com/travinov/qwen-sber-doc-extension.git
-gigacode extensions link /absolute/path/to/qwen-sber-doc-extension
+git clone https://github.com/travinov/gigadoc-extension.git
+gigacode extensions link /absolute/path/to/gigadoc-extension
 ```
 
 ## Подключение MCP server в Gigacode
@@ -50,9 +50,9 @@ gigacode extensions link /absolute/path/to/qwen-sber-doc-extension
 ```json
 {
   "mcpServers": {
-    "sber-doc-mcp": {
+    "gigadoc-mcp": {
       "command": "npx",
-      "args": ["--yes", "qwen-sber-doc-mcp"],
+      "args": ["--yes", "gigadoc-mcp"],
       "timeout": 15000
     }
   }
@@ -64,9 +64,9 @@ gigacode extensions link /absolute/path/to/qwen-sber-doc-extension
 ```json
 {
   "mcpServers": {
-    "sber-doc-mcp": {
+    "gigadoc-mcp": {
       "command": "node",
-      "args": ["/absolute/path/to/qwen-sber-doc-mcp/dist/src/index.js"],
+      "args": ["/absolute/path/to/gigadoc-mcp/dist/src/index.js"],
       "timeout": 15000
     }
   }
