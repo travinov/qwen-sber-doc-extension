@@ -8,29 +8,25 @@
 2. MCP repo: [https://github.com/travinov/gigadoc-mcp](https://github.com/travinov/gigadoc-mcp)
 3. MCP npm: [https://www.npmjs.com/package/gigadoc-mcp](https://www.npmjs.com/package/gigadoc-mcp)
 
-## Форматы манифеста
+## Что делает extension
 
-Репозиторий содержит несколько manifest-файлов:
+1. Добавляет команды `/doc:sber` и `/sber`.
+2. Подключает стиль `sber-doc-style` для официальной русскоязычной документации.
+3. Использует MCP tools сервера `gigadoc-mcp`:
+   - `analyze_python_target`
+   - `build_sber_doc_outline`
+   - `build_sber_project_outline`
+   - `validate_sber_doc`
+
+## Форматы манифеста
 
 1. `gigacode-extension.json` — основной для Gigacode fork.
 2. `gemini-extension.json` — Gemini-совместимый формат.
 3. `qwen-extension.json` — формат Qwen.
 
-## Важно про MCP
+## Установка extension
 
-Для Gigacode/Gemini расширение обычно ставится отдельно от MCP-конфига.  
-Команды `/doc:sber` и `/sber` требуют доступности MCP tools:
-
-1. `analyze_python_target`
-2. `build_sber_doc_outline`
-3. `build_sber_project_outline`
-4. `validate_sber_doc`
-
-Если tools не подключены, команда корректно сообщит о необходимости добавить MCP server `gigadoc-mcp`.
-
-## Установка в Gigacode
-
-В интерфейсе:
+Через UI:
 
 ```text
 /extensions install https://github.com/travinov/gigadoc-extension.git
@@ -43,9 +39,9 @@ git clone https://github.com/travinov/gigadoc-extension.git
 gigacode extensions link /absolute/path/to/gigadoc-extension
 ```
 
-## Подключение MCP server в Gigacode
+## Подключение MCP в Gigacode: ветвление по окружению
 
-Рекомендуемый вариант через `npx`:
+### Вариант A: стандартная сеть (рекомендуется)
 
 ```json
 {
@@ -53,13 +49,57 @@ gigacode extensions link /absolute/path/to/gigadoc-extension
     "gigadoc-mcp": {
       "command": "npx",
       "args": ["--yes", "gigadoc-mcp"],
-      "timeout": 15000
+      "timeout": 60000
     }
   }
 }
 ```
 
-Локальный build-вариант:
+### Вариант B: корпоративная сеть с SSL inspection
+
+Если появляется ошибка вроде `SELF_SIGNED_CERT_IN_CHAIN`, используйте:
+
+```json
+{
+  "mcpServers": {
+    "gigadoc-mcp": {
+      "command": "npx",
+      "args": ["--yes", "gigadoc-mcp"],
+      "env": {
+        "NPM_CONFIG_STRICT_SSL": "false"
+      },
+      "timeout": 60000
+    }
+  }
+}
+```
+
+Примечание: `NPM_CONFIG_STRICT_SSL=false` — временный workaround. Для production рекомендуется настроить корпоративный CA (`npm config set cafile ...`).
+
+### Вариант C: альтернативное окружение (CLI не видит PATH)
+
+Используйте абсолютные пути к Node/npm:
+
+```json
+{
+  "mcpServers": {
+    "gigadoc-mcp": {
+      "command": "/absolute/path/to/node",
+      "args": [
+        "/absolute/path/to/npm/bin/npx-cli.js",
+        "--yes",
+        "gigadoc-mcp"
+      ],
+      "env": {
+        "PATH": "/absolute/path/to/node/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+      },
+      "timeout": 60000
+    }
+  }
+}
+```
+
+### Вариант D: локальный запуск MCP без `npx`
 
 ```json
 {
@@ -67,15 +107,27 @@ gigacode extensions link /absolute/path/to/gigadoc-extension
     "gigadoc-mcp": {
       "command": "node",
       "args": ["/absolute/path/to/gigadoc-mcp/dist/src/index.js"],
-      "timeout": 15000
+      "timeout": 60000
     }
   }
 }
 ```
 
+## Как проверить подключение
+
+1. Перезапустить CLI после изменения `settings.json`.
+2. Открыть `/mcp` и убедиться, что `gigadoc-mcp` в статусе `connected`.
+3. Выполнить:
+
+```text
+/doc:sber /repo/src/module.py
+```
+
+Если MCP недоступен, команда вернет подсказку о подключении сервера.
+
 ## Использование
 
-1. Один файл:
+Один файл:
 
 ```text
 /doc:sber /repo/src/module.py
@@ -83,10 +135,10 @@ gigacode extensions link /absolute/path/to/gigadoc-extension
 /sber /repo/src/module.py
 ```
 
-2. Вся директория:
+Вся директория:
 
 ```text
 /doc:sber /repo/src
 ```
 
-Результат: структурированный документ (модульный или проектный), затем проверка качества через `validate_sber_doc`.
+Результат: структурированный документ (модульный или проектный) с проверкой качества через `validate_sber_doc`.
